@@ -1,18 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="15dp"
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/head_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_centerHorizontal="true"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:text="ChatGPT Images "/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/input"
+            android:hint="Enter your text"
+            android:padding="11dp"
+            android:layout_marginVertical="28dp"
+            ></EditText>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:id="@+id/fun_btn"
+            android:padding="11dp"
+            android:text="Generate image"
+            ></com.google.android.material.button.MaterialButton>
+
+
+        <ProgressBar
+            android:id="@+id/waiting_bar"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:visibility="gone"></ProgressBar>
+
+
+
+
+    </LinearLayout>
+
+</RelativeLayout>
