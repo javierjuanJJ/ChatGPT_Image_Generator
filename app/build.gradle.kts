@@ -39,7 +39,8 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    // https://mvnrepository.com/artifact/com.squareup.picasso/picasso
-    implementation("com.squareup.picasso:picasso:2.5.2")
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
+
 
 }
