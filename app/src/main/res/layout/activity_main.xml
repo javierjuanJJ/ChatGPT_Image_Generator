@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="15dp"
+    android:layout_margin="10dp"
     tools:context=".MainActivity">
 
     <TextView
@@ -25,11 +25,11 @@
 
         <EditText
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:id="@+id/input"
             android:hint="Enter your text"
             android:padding="11dp"
-            android:layout_marginVertical="28dp"
+            android:layout_marginVertical="10dp"
             ></EditText>
 
         <com.google.android.material.button.MaterialButton
@@ -44,8 +44,28 @@
         <ProgressBar
             android:id="@+id/waiting_bar"
             android:layout_width="match_parent"
-            android:layout_height="65dp"
+            android:layout_height="60dp"
             android:visibility="gone"></ProgressBar>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="310dp"
+            android:layout_height="290dp"
+            android:layout_margin="10dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="11dp"
+            app:cardElevation="11dp"
+            app:cardMaxElevation="15dp">
+            
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:src="@color/white"
+                android:id="@+id/image_view">
+
+            </ImageView>
+            
+        </androidx.cardview.widget.CardView>
 
 
 
