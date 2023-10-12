@@ -71,15 +71,8 @@ public class AsyncTaskGenerateImage extends AsyncTask<String, Void, String>{
     }
 
     private String chatGPTApi(String ipt) {
-        JSONObject json = new JSONObject();
-        try {
-            json.put("prompt",ipt);
-            json.put("size","256x256");
-        } catch (JSONException e) {
-
-        }
-        RequestBody requestBody = RequestBody.create(json.toString(), JSON);
-        Request request = new Request.Builder().url(OpenAIConstants.BASE_URL).header(OpenAIConstants.AUTHORIZATION, OpenAIConstants.TOKEN_OPEN_AI).post(requestBody).build();
+        JSONObject json = getJsonObject(ipt);
+        Request request = getRequest(json);
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -102,6 +95,24 @@ public class AsyncTaskGenerateImage extends AsyncTask<String, Void, String>{
             }
         });
         return imgUrl;
+    }
+
+    @NonNull
+    private static Request getRequest(JSONObject json) {
+        RequestBody requestBody = RequestBody.create(json.toString(), JSON);
+        return new Request.Builder().url(OpenAIConstants.BASE_URL).header(OpenAIConstants.AUTHORIZATION, OpenAIConstants.TOKEN_OPEN_AI).post(requestBody).build();
+    }
+
+    @NonNull
+    private static JSONObject getJsonObject(String ipt) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("prompt", ipt);
+            json.put("size","256x256");
+        } catch (JSONException e) {
+
+        }
+        return json;
     }
 
 
