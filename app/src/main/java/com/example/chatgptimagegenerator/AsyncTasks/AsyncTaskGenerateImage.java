@@ -3,7 +3,6 @@ package com.example.chatgptimagegenerator.AsyncTasks;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -32,35 +31,36 @@ import okhttp3.Response;
 public class AsyncTaskGenerateImage extends AsyncTask<String, Void, String>{
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
-    private final WeakReference<ImageView> imgViewReference;
-    private final WeakReference<ProgressBar> waitingBarReference;
-    private final WeakReference<OkHttpClient> clientReference;
-    private final WeakReference<MaterialButton> funBtnReference;
-    private final WeakReference<Context> contextReference;
+    private final ImageView imgView;
+    private final ProgressBar waitingBar;
+    private final OkHttpClient client;
+    private final MaterialButton funBtn;
+    private final Context contextReference;
     private String imgUrl;
 
     public AsyncTaskGenerateImage(Context contextReference, ImageView imgView, ProgressBar waitingBar, OkHttpClient client, MaterialButton funBtn ) {
-        this.imgViewReference = new WeakReference<ImageView>(imgView);
-        this.waitingBarReference = new WeakReference<ProgressBar>(waitingBar);
-        this.clientReference = new WeakReference<OkHttpClient>(client);
-        this.funBtnReference = new WeakReference<MaterialButton>(funBtn);
-        this.contextReference = new WeakReference<Context>(contextReference);
+        this.imgView = new WeakReference<ImageView>(imgView).get();
+        this.waitingBar = new WeakReference<ProgressBar>(waitingBar).get();
+        this.client = new WeakReference<OkHttpClient>(client).get();
+        this.funBtn = new WeakReference<MaterialButton>(funBtn).get();
+        this.contextReference = new WeakReference<Context>(contextReference).get();
+        imgUrl = "";
 
     }
 
 
     private void loadImage(String imgUrl) {
-        Picasso.with(contextReference.get()).load(imgUrl).into(imgViewReference.get());
+        Picasso.with(contextReference).load(imgUrl).into(imgView);
     }
 
     private void setWaiting(boolean b) {
         if(b){
-            waitingBarReference.get().setVisibility(View.VISIBLE);
-            funBtnReference.get().setVisibility(View.GONE);
+            waitingBar.setVisibility(View.VISIBLE);
+            funBtn.setVisibility(View.GONE);
         }
         else {
-            waitingBarReference.get().setVisibility(View.GONE);
-            funBtnReference.get().setVisibility(View.VISIBLE);
+            waitingBar.setVisibility(View.GONE);
+            funBtn.setVisibility(View.VISIBLE);
         }
     }
 
@@ -71,7 +71,6 @@ public class AsyncTaskGenerateImage extends AsyncTask<String, Void, String>{
     }
 
     private String chatGPTApi(String ipt) {
-        imgUrl = "";
         JSONObject json = new JSONObject();
         try {
             json.put("prompt",ipt);
@@ -81,7 +80,7 @@ public class AsyncTaskGenerateImage extends AsyncTask<String, Void, String>{
         }
         RequestBody requestBody = RequestBody.create(json.toString(), JSON);
         Request request = new Request.Builder().url(OpenAIConstants.BASE_URL).header(OpenAIConstants.AUTHORIZATION, OpenAIConstants.TOKEN_OPEN_AI).post(requestBody).build();
-        clientReference.get().newCall(request).enqueue(new Callback() {
+        client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 showToast("Failed to call ChatGPT");
@@ -112,7 +111,7 @@ public class AsyncTaskGenerateImage extends AsyncTask<String, Void, String>{
     }
     private void showToast(String message){
         Looper.prepare();
-        Toast.makeText(contextReference.get(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(contextReference, message, Toast.LENGTH_SHORT).show();
         Looper.loop();
     }
 
