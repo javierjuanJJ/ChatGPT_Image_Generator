@@ -3,6 +3,7 @@ package com.example.chatgptimagegenerator;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.chatgptimagegenerator.AsyncTasks.AsyncTaskGenerateImage;
+import com.example.chatgptimagegenerator.Constants.OpenAIConstants;
 import com.google.android.material.button.MaterialButton;
 import com.squareup.picasso.Picasso;
 
@@ -35,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar waitingBar;
     private MaterialButton funBtn;
     private OkHttpClient client;
-    public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+
+    private AsyncTask<String, Void, String> asyncTaskGenerateImage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,70 +69,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void chatGPTApi(String ipt) {
-        Log.i("GTP_Test","chatGPTApi(String ipt)");
-        setWaiting(true);
-        JSONObject json = new JSONObject();
-        try {
-            json.put("prompt",ipt);
-            json.put("size","256x256");
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-        RequestBody requestBody = RequestBody.create(json.toString(), JSON);
-        Request request = new Request.Builder().url("https://api.openai.com/v1/images/generations").header("Authorization","Bearer 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").post(requestBody).build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Toast.makeText(MainActivity.this, "Failed to call ChatGPT", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                try {
-                    JSONObject jsonObject = new JSONObject(response.body().string());
-                    if (jsonObject.has("data")) {
-                        String imgUrl = jsonObject.getJSONArray("data").getJSONObject(0).getString("url");
-                        loadImage(imgUrl);
-                        setWaiting(false);
-                    }
-                    else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getApplicationContext(), "Error. The JSONObject variable not contains data name", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                    }
-                } catch (JSONException e) {
-                    // throw new RuntimeException(e);
-                }
-            }
-        });
+        OpenAIConstants.cancelAsyncTask(asyncTaskGenerateImage);
+        asyncTaskGenerateImage = new AsyncTaskGenerateImage(getApplicationContext(), imgView, waitingBar, client, funBtn);
+        asyncTaskGenerateImage.execute(ipt);
     }
 
-    private void loadImage(String imgUrl) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Picasso.with(getApplicationContext()).load(imgUrl).into(imgView);
-            }
-        });
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        OpenAIConstants.cancelAsyncTask(asyncTaskGenerateImage);
     }
 
-    private void setWaiting(boolean b) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(b){
-                    waitingBar.setVisibility(View.VISIBLE);
-                    funBtn.setVisibility(View.GONE);
-                }
-                else {
-                    waitingBar.setVisibility(View.GONE);
-                    funBtn.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-    }
+
+
 }
